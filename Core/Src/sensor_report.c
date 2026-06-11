@@ -1,5 +1,6 @@
 #include "sensor_report.h"
 
+#include "buck.h"
 #include "current_sensor.h"
 #include "uart_app.h"
 
@@ -22,11 +23,25 @@ void sensor_report_task(void)
   }
   g_last_report_ms = now;
 
-  /* Collect intensity from current sensor */
+  /* Collect intensity from INA219 current sensor */
   float intensity = current_sensor_get_current_mA();
   int i_centi = (int)(intensity * 100.0f + ((intensity >= 0.0f) ? 0.5f : -0.5f));
   int i_sign  = 1;
   if (i_centi < 0) { i_sign = -1; i_centi = -i_centi; }
+
+  /* Read current measured by the buck itself */
+  float buck_mA = 0.0f;
+  int   b_centi = 0;
+  int   b_sign  = 1;
+  if (buck_read_imeas_mA(&buck_mA))
+  {
+    b_centi = (int)(buck_mA * 100.0f + ((buck_mA >= 0.0f) ? 0.5f : -0.5f));
+    if (b_centi < 0) { b_sign = -1; b_centi = -b_centi; }
+  }
+
+  pc_printf("IMEAS: INA219=%s%d.%02dmA  BUCK=%s%d.%02dmA\r\n",
+            (i_sign < 0) ? "-" : "", i_centi / 100, i_centi % 100,
+            (b_sign < 0) ? "-" : "", b_centi / 100, b_centi % 100);
 
   /* TODO: replace stubs with real sensor reads when available */
   int temp_centi   = 0;   /* temp_sensor_get_temp_C() * 100 */

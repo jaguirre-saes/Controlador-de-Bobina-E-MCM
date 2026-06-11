@@ -1,2 +1,2 @@
-../Core/Src/sensor_report.c:10:6:sensor_report_init	1
-../Core/Src/sensor_report.c:15:6:sensor_report_task	5
+../Core/Src/sensor_report.c:11:6:sensor_report_init	1
+../Core/Src/sensor_report.c:16:6:sensor_report_task	10
