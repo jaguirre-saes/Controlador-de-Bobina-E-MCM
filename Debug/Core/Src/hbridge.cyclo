@@ -1,0 +1,3 @@
+../Core/Src/hbridge.c:8:6:hbridge_init	1
+../Core/Src/hbridge.c:16:6:coil_enable	2
+../Core/Src/hbridge.c:26:6:coil_set_dir	2

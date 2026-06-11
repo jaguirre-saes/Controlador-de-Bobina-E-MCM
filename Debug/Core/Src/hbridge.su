@@ -1,0 +1,3 @@
+../Core/Src/hbridge.c:8:6:hbridge_init	24	static
+../Core/Src/hbridge.c:16:6:coil_enable	16	static
+../Core/Src/hbridge.c:26:6:coil_set_dir	16	static

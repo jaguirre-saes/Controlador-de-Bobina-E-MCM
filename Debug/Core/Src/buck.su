@@ -1,0 +1,8 @@
+../Core/Src/buck.c:12:6:buck_init	16	static
+../Core/Src/buck.c:18:19:buck_send	24	static
+../Core/Src/buck.c:28:5:buck_readline	40	static
+../Core/Src/buck.c:58:5:parse_int_after_equal	32	static
+../Core/Src/buck.c:93:6:buck_set_voltage_abs	72	static
+../Core/Src/buck.c:118:6:buck_set_current_abs	72	static
+../Core/Src/buck.c:143:6:buck_output	56	static
+../Core/Src/buck.c:156:6:buck_read_vmeas_print	136	static

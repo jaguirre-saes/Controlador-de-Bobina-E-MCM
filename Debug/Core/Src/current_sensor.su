@@ -1,0 +1,5 @@
+../Core/Src/current_sensor.c:25:16:current_sensor_read_once	24	static
+../Core/Src/current_sensor.c:40:6:current_sensor_init	16	static
+../Core/Src/current_sensor.c:64:6:current_sensor_task	16	static
+../Core/Src/current_sensor.c:91:7:current_sensor_get_current_mA	4	static
+../Core/Src/current_sensor.c:96:9:current_sensor_is_ready	4	static
