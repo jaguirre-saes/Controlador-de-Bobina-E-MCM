@@ -11,6 +11,13 @@ void buck_set_voltage_abs(double v_abs);
 void buck_set_current_abs(double i_abs);
 void buck_output(uint8_t on);
 void buck_read_vmeas_print(void);
+int  buck_read_imeas_mA(float *out_mA);
+
+/* Watchdog: compara INA219 vs medicion interna del buck.
+ * Si el error supera 10% durante 5 muestras consecutivas, apaga el buck.
+ * Llamar buck_current_watchdog_reset() al cambiar el setpoint o encender. */
+void buck_current_watchdog_task(void);
+void buck_current_watchdog_reset(void);
 
 
 #endif /* BUCK_H */

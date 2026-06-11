@@ -126,6 +126,7 @@ int main(void)
     /* USER CODE BEGIN 3 */
     current_sensor_task();
     sensor_report_task();
+    buck_current_watchdog_task();
     rs485_poll();
   }
   /* USER CODE END 3 */
