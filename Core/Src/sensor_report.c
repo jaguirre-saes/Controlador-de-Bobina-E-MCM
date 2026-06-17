@@ -29,7 +29,7 @@ void sensor_report_task(void)
   int i_sign  = 1;
   if (i_centi < 0) { i_sign = -1; i_centi = -i_centi; }
 
-  /* Read current measured by the buck itself */
+  /* Read current measured by the buck itself (solo comparacion, no se usa como referencia) */
   float buck_mA = 0.0f;
   int   b_centi = 0;
   int   b_sign  = 1;
@@ -39,7 +39,7 @@ void sensor_report_task(void)
     if (b_centi < 0) { b_sign = -1; b_centi = -b_centi; }
   }
 
-  pc_printf("IMEAS: INA219=%s%d.%02dmA  BUCK=%s%d.%02dmA\r\n",
+  pc_printf("IMEAS: INA219=%s%d.%02dmA (REF)  BUCK=%s%d.%02dmA\r\n",
             (i_sign < 0) ? "-" : "", i_centi / 100, i_centi % 100,
             (b_sign < 0) ? "-" : "", b_centi / 100, b_centi % 100);
 
