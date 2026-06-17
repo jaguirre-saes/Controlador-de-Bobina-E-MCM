@@ -117,6 +117,25 @@ void buck_set_voltage_abs(double v_abs)
   (void)buck_send(cmd);
 }
 
+/* 2-point output correction (bench cal vs multimeter, R=15.1 Ohm):
+ *   setpoint 0.500A -> real 0.4444A  (6.71 V / 15.1 Ohm)
+ *   setpoint 1.000A -> real 0.9536A  (14.4 V / 15.1 Ohm)
+ *   model:  real = 1.0184 * setpoint - 0.0648
+ *   inverse: setpoint = (desired + 0.0648) / 1.0184
+ *   Guard: no correction below 100 mA (model breaks down near zero). */
+#define BUCK_CAL_SLOPE   1.0184
+#define BUCK_CAL_OFFSET  0.0648   /* A */
+#define BUCK_CAL_MIN_A   0.100
+
+static double buck_cal_compensate(double i_abs)
+{
+  if (i_abs < BUCK_CAL_MIN_A)
+  {
+    return i_abs;
+  }
+  return (i_abs + BUCK_CAL_OFFSET) / BUCK_CAL_SLOPE;
+}
+
 void buck_set_current_abs(double i_abs)
 {
   char cmd[40];
@@ -131,6 +150,8 @@ void buck_set_current_abs(double i_abs)
   {
     i_abs = -i_abs;
   }
+
+  i_abs = buck_cal_compensate(i_abs);
 
   if (i_abs > 5.0)
   {
@@ -210,9 +231,11 @@ void buck_read_vmeas_print(void)
 #define BUCK_WDG_TRIP_COUNT     5      /* fallos consecutivos para disparar     */
 #define BUCK_WDG_MIN_MA         100u   /* corriente minima para comparar (mA)   */
 
-static uint32_t g_wdg_last_ms = 0u;
-static int      g_wdg_err_cnt = 0;
-static uint8_t  g_wdg_tripped = 0u;
+static uint32_t g_wdg_last_ms    = 0u;
+static int      g_wdg_err_cnt   = 0;
+static uint8_t  g_wdg_tripped   = 0u;
+static uint8_t  g_wdg_active    = 0u;   /* solo activo mientras buck ON */
+static float    g_wdg_setpt_mA  = 0.0f; /* setpoint real como referencia */
 
 int buck_read_imeas_mA(float *out_mA)
 {
@@ -252,24 +275,38 @@ int buck_read_imeas_mA(float *out_mA)
   return 1;
 }
 
+void buck_current_watchdog_arm(float setpoint_mA)
+{
+  g_wdg_setpt_mA = (setpoint_mA < 0.0f) ? -setpoint_mA : setpoint_mA;
+  g_wdg_err_cnt  = 0;
+  g_wdg_tripped  = 0u;
+  g_wdg_active   = 1u;
+}
+
 void buck_current_watchdog_reset(void)
 {
   g_wdg_err_cnt = 0;
   g_wdg_tripped = 0u;
+  g_wdg_active  = 0u;
+  g_wdg_setpt_mA = 0.0f;
+}
+
+uint8_t buck_current_watchdog_is_tripped(void)
+{
+  return g_wdg_tripped;
 }
 
 void buck_current_watchdog_task(void)
 {
   uint32_t now;
   float    ina_mA;
-  float    buck_mA;
   float    ref;
   float    diff;
   int      err_pct;
   int      ina_int;
   int      buck_int;
 
-  if (g_wdg_tripped)
+  if (!g_wdg_active || g_wdg_tripped)
   {
     return;
   }
@@ -292,33 +329,23 @@ void buck_current_watchdog_task(void)
     ina_mA = -ina_mA;
   }
 
-  if (!buck_read_imeas_mA(&buck_mA))
-  {
-    /* No se pudo leer el buck: omitir esta muestra */
-    return;
-  }
-  if (buck_mA < 0.0f)
-  {
-    buck_mA = -buck_mA;
-  }
-
-  /* Solo comparar cuando la corriente es significativa */
-  ref = (ina_mA > buck_mA) ? ina_mA : buck_mA;
+  /* Usar el setpoint conocido como referencia (el registro r31 no responde) */
+  ref = (ina_mA > g_wdg_setpt_mA) ? ina_mA : g_wdg_setpt_mA;
   if (ref < (float)BUCK_WDG_MIN_MA)
   {
     g_wdg_err_cnt = 0;
     return;
   }
 
-  diff    = (ina_mA > buck_mA) ? (ina_mA - buck_mA) : (buck_mA - ina_mA);
+  diff    = (ina_mA > g_wdg_setpt_mA) ? (ina_mA - g_wdg_setpt_mA) : (g_wdg_setpt_mA - ina_mA);
   err_pct = (int)((diff / ref) * 100.0f + 0.5f);
 
   if (err_pct > (int)BUCK_WDG_ERROR_PCT)
   {
     g_wdg_err_cnt++;
-    ina_int  = (int)(ina_mA  + 0.5f);
-    buck_int = (int)(buck_mA + 0.5f);
-    pc_printf("WDG SENSOR ERR %d/5: INA=%dmA BUCK=%dmA ERR=%d%%\r\n",
+    ina_int  = (int)(ina_mA          + 0.5f);
+    buck_int = (int)(g_wdg_setpt_mA  + 0.5f);
+    pc_printf("WDG SENSOR ERR %d/5: INA=%dmA SETPT=%dmA ERR=%d%%\r\n",
               g_wdg_err_cnt, ina_int, buck_int, err_pct);
 
     if (g_wdg_err_cnt >= BUCK_WDG_TRIP_COUNT)

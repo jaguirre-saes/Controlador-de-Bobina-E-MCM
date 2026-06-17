@@ -14,8 +14,17 @@
 /* Shunt measured: 18.8 mOhm. Cal = 0.04096 / (0.0001 A * 0.0188 Ohm) = 21787. */
 #define INA219_CAL_VALUE          21787u
 #define INA219_CURRENT_LSB_mA     0.1f
-/* Empirical trim from bench: 1.000 A real / 0.310 A reported = 3.225806. */
-#define INA219_GAIN_CORRECTION    3.225806f
+/* 2-point linear cal vs multimeter (R_load = 15.1 Ohm):
+ *   cmd 0.5 A -> V_shunt=6.71V  -> I_real=444.4 mA, raw_internal=148.7 mA
+ *   cmd 1.0 A -> V_shunt=14.4V  -> I_real=953.6 mA, raw_internal=297.5 mA
+ *   gain = (953.6-444.4)/(297.5-148.7) = 3.4241
+ *   offset = 444.4 - 148.7*3.4241 = -65.0 mA
+ *   I_real_mA = raw_mA * GAIN + OFFSET */
+#define INA219_GAIN_CORRECTION    3.4241f
+#define INA219_OFFSET_mA         (-65.0f)
+/* Deadband: lecturas por debajo de este umbral se consideran ruido/offset
+ * y se devuelven como 0. Evita valores negativos cuando el buck esta apagado. */
+#define INA219_DEADBAND_mA        100.0f
 
 static uint8_t g_sensor_ready = 0;
 static uint32_t g_last_sample_ms = 0;
@@ -33,7 +42,11 @@ static uint8_t current_sensor_read_once(float *out_mA)
   }
 
   signed_raw = (int16_t)raw;
-  *out_mA = ((float)signed_raw * INA219_CURRENT_LSB_mA) * INA219_GAIN_CORRECTION;
+  *out_mA = ((float)signed_raw * INA219_CURRENT_LSB_mA) * INA219_GAIN_CORRECTION + INA219_OFFSET_mA;
+  if ((*out_mA > -INA219_DEADBAND_mA) && (*out_mA < INA219_DEADBAND_mA))
+  {
+    *out_mA = 0.0f;
+  }
   return 1;
 }
 

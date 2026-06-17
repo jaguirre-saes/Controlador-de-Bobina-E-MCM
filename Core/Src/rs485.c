@@ -130,6 +130,8 @@ static void apply_state(uint8_t on, int dir, double i_abs)
 {
   if ((!on) || (i_abs <= 0.0))
   {
+    buck_current_watchdog_reset();  /* desarmar watchdog: buck apagado */
+
     coil_enable(0);
     HAL_Delay(150);
 
@@ -172,6 +174,7 @@ static void apply_state(uint8_t on, int dir, double i_abs)
 
   ramp_buck_current(0.0, i_abs);
   g_iapplied_abs = i_abs;
+  buck_current_watchdog_arm((float)(i_abs * 1000.0)); /* armar con setpoint en mA */
 }
 
 static void handle_pc_line(const char *line_in)
@@ -340,7 +343,13 @@ static void handle_pc_line(const char *line_in)
   g_last_heartbeat_tick = HAL_GetTick();
 }
 
+double rs485_get_iapplied_abs(void)
+{
+  return g_iapplied_abs;
+}
+
 void rs485_init(UART_HandleTypeDef *huart)
+
 {
   g_rs485_uart = huart;
   g_idx = 0;
@@ -389,6 +398,18 @@ void rs485_poll(void)
     has_line = 1u;
   }
   __enable_irq();
+
+  /* Si el watchdog de corriente disparo mientras el buck estaba encendido,
+   * sincronizar el estado local antes de procesar cualquier comando nuevo.
+   * Asi el proximo I/ON hara apply_state completo (habilita salida) en vez
+   * de ramp_buck_current (que solo ajusta el limite sin habilitar salida). */
+  if (buck_current_watchdog_is_tripped())
+  {
+    g_on = 0;
+    g_iapplied_abs = 0.0;
+    buck_current_watchdog_reset();
+    pc_print("WDG RESET: envia I <valor> para volver a encender\r\n");
+  }
 
   if (has_line)
   {

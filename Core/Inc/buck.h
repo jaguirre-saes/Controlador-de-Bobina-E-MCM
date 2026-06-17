@@ -17,7 +17,9 @@ int  buck_read_imeas_mA(float *out_mA);
  * Si el error supera 10% durante 5 muestras consecutivas, apaga el buck.
  * Llamar buck_current_watchdog_reset() al cambiar el setpoint o encender. */
 void buck_current_watchdog_task(void);
-void buck_current_watchdog_reset(void);
+void buck_current_watchdog_arm(float setpoint_mA);  /* llama al encender */
+void buck_current_watchdog_reset(void);             /* llama al apagar   */
+uint8_t buck_current_watchdog_is_tripped(void);
 
 
 #endif /* BUCK_H */

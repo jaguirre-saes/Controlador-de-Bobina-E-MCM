@@ -1,7 +1,7 @@
 #include "sensor_report.h"
 
-#include "buck.h"
 #include "current_sensor.h"
+#include "rs485.h"
 #include "uart_app.h"
 
 #define REPORT_INTERVAL_MS  1000u
@@ -29,17 +29,13 @@ void sensor_report_task(void)
   int i_sign  = 1;
   if (i_centi < 0) { i_sign = -1; i_centi = -i_centi; }
 
-  /* Read current measured by the buck itself (solo comparacion, no se usa como referencia) */
-  float buck_mA = 0.0f;
-  int   b_centi = 0;
+  /* Setpoint aplicado al buck (lo que se le pidio, despues de compensacion) */
+  float buck_mA = (float)(rs485_get_iapplied_abs() * 1000.0);
+  int   b_centi = (int)(buck_mA * 100.0f + 0.5f);
   int   b_sign  = 1;
-  if (buck_read_imeas_mA(&buck_mA))
-  {
-    b_centi = (int)(buck_mA * 100.0f + ((buck_mA >= 0.0f) ? 0.5f : -0.5f));
-    if (b_centi < 0) { b_sign = -1; b_centi = -b_centi; }
-  }
+  if (b_centi < 0) { b_sign = -1; b_centi = -b_centi; }
 
-  pc_printf("IMEAS: INA219=%s%d.%02dmA (REF)  BUCK=%s%d.%02dmA\r\n",
+  pc_printf("IMEAS: INA219=%s%d.%02dmA (REF)  BUCK_SET=%s%d.%02dmA\r\n",
             (i_sign < 0) ? "-" : "", i_centi / 100, i_centi % 100,
             (b_sign < 0) ? "-" : "", b_centi / 100, b_centi % 100);
 

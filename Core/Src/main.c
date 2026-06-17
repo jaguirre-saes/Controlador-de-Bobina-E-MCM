@@ -114,7 +114,7 @@ int main(void)
   sensor_report_init();
 
   pc_print("READY\r\n");
-  pc_print("Commands: I 1.50 | I -1.50 | ON | OFF | READ | HB | HELP (TTL auto-safe 5s)\r\n");
+  pc_print("Commands: HOLA I 1.50 | I -1.50 | ON | OFF | READ | HB | HELP (TTL auto-safe 5s)\r\n");
   /* USER CODE END 2 */
 
   /* Infinite loop */
