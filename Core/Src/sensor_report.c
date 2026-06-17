@@ -1,6 +1,7 @@
 #include "sensor_report.h"
 
 #include "current_sensor.h"
+#include "rs485.h"
 #include "uart_app.h"
 
 #define REPORT_INTERVAL_MS  1000u
@@ -22,11 +23,21 @@ void sensor_report_task(void)
   }
   g_last_report_ms = now;
 
-  /* Collect intensity from current sensor */
+  /* Collect intensity from INA219 current sensor */
   float intensity = current_sensor_get_current_mA();
   int i_centi = (int)(intensity * 100.0f + ((intensity >= 0.0f) ? 0.5f : -0.5f));
   int i_sign  = 1;
   if (i_centi < 0) { i_sign = -1; i_centi = -i_centi; }
+
+  /* Setpoint aplicado al buck (lo que se le pidio, despues de compensacion) */
+  float buck_mA = (float)(rs485_get_iapplied_abs() * 1000.0);
+  int   b_centi = (int)(buck_mA * 100.0f + 0.5f);
+  int   b_sign  = 1;
+  if (b_centi < 0) { b_sign = -1; b_centi = -b_centi; }
+
+  pc_printf("IMEAS: INA219=%s%d.%02dmA (REF)  BUCK_SET=%s%d.%02dmA\r\n",
+            (i_sign < 0) ? "-" : "", i_centi / 100, i_centi % 100,
+            (b_sign < 0) ? "-" : "", b_centi / 100, b_centi % 100);
 
   /* TODO: replace stubs with real sensor reads when available */
   int temp_centi   = 0;   /* temp_sensor_get_temp_C() * 100 */

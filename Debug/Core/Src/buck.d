@@ -30,6 +30,7 @@ Core/Src/buck.o: ../Core/Src/buck.c ../Core/Inc/buck.h ../Core/Inc/main.h \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_pwr_ex.h \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_uart.h \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_uart_ex.h \
+ ../Core/Inc/current_sensor.h ../Core/Inc/hbridge.h \
  ../Core/Inc/uart_app.h
 ../Core/Inc/buck.h:
 ../Core/Inc/main.h:
@@ -64,4 +65,6 @@ Core/Src/buck.o: ../Core/Src/buck.c ../Core/Inc/buck.h ../Core/Inc/main.h \
 ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_pwr_ex.h:
 ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_uart.h:
 ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_uart_ex.h:
+../Core/Inc/current_sensor.h:
+../Core/Inc/hbridge.h:
 ../Core/Inc/uart_app.h:

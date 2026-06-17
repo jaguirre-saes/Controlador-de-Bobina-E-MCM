@@ -114,7 +114,7 @@ int main(void)
   sensor_report_init();
 
   pc_print("READY\r\n");
-  pc_print("Commands: I 1.50 | I -1.50 | ON | OFF | READ | HB | HELP (TTL auto-safe 5s)\r\n");
+  pc_print("Commands: HOLA I 1.50 | I -1.50 | ON | OFF | READ | HB | HELP (TTL auto-safe 5s)\r\n");
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -126,6 +126,7 @@ int main(void)
     /* USER CODE BEGIN 3 */
     current_sensor_task();
     sensor_report_task();
+    buck_current_watchdog_task();
     rs485_poll();
   }
   /* USER CODE END 3 */

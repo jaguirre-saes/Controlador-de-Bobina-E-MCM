@@ -3,8 +3,9 @@
 ../Core/Src/rs485.c:69:12:streq_ci	8
 ../Core/Src/rs485.c:84:13:ramp_buck_current	8
 ../Core/Src/rs485.c:129:13:apply_state	4
-../Core/Src/rs485.c:177:13:handle_pc_line	29
-../Core/Src/rs485.c:343:6:rs485_init	1
-../Core/Src/rs485.c:354:6:rs485_poll	8
-../Core/Src/rs485.c:399:6:rs485_uart_rx_cplt_callback	8
-../Core/Src/rs485.c:438:6:rs485_uart_error_callback	3
+../Core/Src/rs485.c:180:13:handle_pc_line	29
+../Core/Src/rs485.c:346:8:rs485_get_iapplied_abs	1
+../Core/Src/rs485.c:351:6:rs485_init	1
+../Core/Src/rs485.c:363:6:rs485_poll	9
+../Core/Src/rs485.c:420:6:rs485_uart_rx_cplt_callback	8
+../Core/Src/rs485.c:459:6:rs485_uart_error_callback	3
