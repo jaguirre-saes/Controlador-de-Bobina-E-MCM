@@ -1,5 +1,9 @@
-../Core/Src/current_sensor.c:34:16:current_sensor_read_once	24	static
-../Core/Src/current_sensor.c:53:6:current_sensor_init	16	static
-../Core/Src/current_sensor.c:77:6:current_sensor_task	16	static
-../Core/Src/current_sensor.c:104:7:current_sensor_get_current_mA	4	static
-../Core/Src/current_sensor.c:109:9:current_sensor_is_ready	4	static
+../Core/Src/current_sensor.c:20:16:current_sensor_read_once	24	static
+../Core/Src/current_sensor.c:33:14:apply_output_filters	16	static
+../Core/Src/current_sensor.c:51:6:current_sensor_init	16	static
+../Core/Src/current_sensor.c:75:6:current_sensor_set_output_active	16	static
+../Core/Src/current_sensor.c:80:6:current_sensor_task	16	static
+../Core/Src/current_sensor.c:108:6:current_sensor_print_debug	24	static
+../Core/Src/current_sensor.c:135:7:current_sensor_get_current_mA	4	static
+../Core/Src/current_sensor.c:140:9:current_sensor_is_ready	4	static
+../Core/Src/current_sensor.c:145:9:current_sensor_has_valid_sample	4	static

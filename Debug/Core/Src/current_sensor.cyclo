@@ -1,5 +1,9 @@
-../Core/Src/current_sensor.c:34:16:current_sensor_read_once	4
-../Core/Src/current_sensor.c:53:6:current_sensor_init	3
-../Core/Src/current_sensor.c:77:6:current_sensor_task	4
-../Core/Src/current_sensor.c:104:7:current_sensor_get_current_mA	1
-../Core/Src/current_sensor.c:109:9:current_sensor_is_ready	1
+../Core/Src/current_sensor.c:20:16:current_sensor_read_once	2
+../Core/Src/current_sensor.c:33:14:apply_output_filters	5
+../Core/Src/current_sensor.c:51:6:current_sensor_init	3
+../Core/Src/current_sensor.c:75:6:current_sensor_set_output_active	2
+../Core/Src/current_sensor.c:80:6:current_sensor_task	4
+../Core/Src/current_sensor.c:108:6:current_sensor_print_debug	4
+../Core/Src/current_sensor.c:135:7:current_sensor_get_current_mA	1
+../Core/Src/current_sensor.c:140:9:current_sensor_is_ready	1
+../Core/Src/current_sensor.c:145:9:current_sensor_has_valid_sample	3

@@ -1,0 +1,4 @@
+../Core/Src/safety.c:19:6:safety_iwdg_start	16	static
+../Core/Src/safety.c:39:6:safety_iwdg_kick	4	static
+../Core/Src/safety.c:44:9:safety_reset_was_iwdg	4	static
+../Core/Src/safety.c:55:6:safety_force_coil_off	4	static

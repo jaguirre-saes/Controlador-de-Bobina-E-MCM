@@ -11,14 +11,15 @@ void buck_set_voltage_abs(double v_abs);
 void buck_set_current_abs(double i_abs);
 void buck_output(uint8_t on);
 void buck_read_vmeas_print(void);
+int  buck_read_vmeas_cV(int *out_v100);   /* tension de salida en centivoltios; 1 = OK */
 int  buck_read_imeas_mA(float *out_mA);
 
-/* Watchdog: compara INA219 vs medicion interna del buck.
- * Si el error supera 10% durante 5 muestras consecutivas, apaga el buck.
- * Llamar buck_current_watchdog_reset() al cambiar el setpoint o encender. */
+/* Watchdog: compara la corriente del INA219 con el setpoint aplicado.
+ * Si el error supera CFG_WDG_ERROR_PCT durante CFG_WDG_TRIP_COUNT muestras
+ * consecutivas, apaga el buck. Volver a armar cada vez que cambie el setpoint. */
 void buck_current_watchdog_task(void);
-void buck_current_watchdog_arm(float setpoint_mA);  /* llama al encender */
-void buck_current_watchdog_reset(void);             /* llama al apagar   */
+void buck_current_watchdog_arm(float setpoint_mA);  /* al encender / cambiar I */
+void buck_current_watchdog_reset(void);             /* al apagar             */
 uint8_t buck_current_watchdog_is_tripped(void);
 
 

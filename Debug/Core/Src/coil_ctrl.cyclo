@@ -1,0 +1,17 @@
+../Core/Src/coil_ctrl.c:52:12:to_centiamp	2
+../Core/Src/coil_ctrl.c:61:13:enter_state	1
+../Core/Src/coil_ctrl.c:69:13:emergency_off	1
+../Core/Src/coil_ctrl.c:84:13:run_on_step	8
+../Core/Src/coil_ctrl.c:99:13:run_off_step	5
+../Core/Src/coil_ctrl.c:110:13:ramp_step	5
+../Core/Src/coil_ctrl.c:144:13:check_protections	6
+../Core/Src/coil_ctrl.c:177:6:coil_ctrl_init	1
+../Core/Src/coil_ctrl.c:194:6:coil_ctrl_task	10
+../Core/Src/coil_ctrl.c:247:6:coil_ctrl_request	11
+../Core/Src/coil_ctrl.c:304:6:coil_ctrl_off	3
+../Core/Src/coil_ctrl.c:319:9:coil_ctrl_is_on	4
+../Core/Src/coil_ctrl.c:324:8:coil_ctrl_get_applied_abs	1
+../Core/Src/coil_ctrl.c:329:8:coil_ctrl_get_target_abs	1
+../Core/Src/coil_ctrl.c:334:5:coil_ctrl_get_dir	1
+../Core/Src/coil_ctrl.c:339:13:coil_ctrl_state_name	6
+../Core/Src/coil_ctrl.c:352:13:coil_ctrl_fault_name	5

@@ -30,7 +30,8 @@ Core/Src/rs485.o: ../Core/Src/rs485.c ../Core/Inc/rs485.h \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_pwr_ex.h \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_uart.h \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_uart_ex.h \
- ../Core/Inc/buck.h ../Core/Inc/hbridge.h ../Core/Inc/uart_app.h
+ ../Core/Inc/app_config.h ../Core/Inc/buck.h ../Core/Inc/coil_ctrl.h \
+ ../Core/Inc/current_sensor.h ../Core/Inc/safety.h ../Core/Inc/uart_app.h
 ../Core/Inc/rs485.h:
 ../Core/Inc/main.h:
 ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal.h:
@@ -64,6 +65,9 @@ Core/Src/rs485.o: ../Core/Src/rs485.c ../Core/Inc/rs485.h \
 ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_pwr_ex.h:
 ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_uart.h:
 ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_uart_ex.h:
+../Core/Inc/app_config.h:
 ../Core/Inc/buck.h:
-../Core/Inc/hbridge.h:
+../Core/Inc/coil_ctrl.h:
+../Core/Inc/current_sensor.h:
+../Core/Inc/safety.h:
 ../Core/Inc/uart_app.h:

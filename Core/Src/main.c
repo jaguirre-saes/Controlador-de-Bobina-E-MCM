@@ -21,11 +21,14 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "app_config.h"
 #include "buck.h"
+#include "coil_ctrl.h"
 #include "current_sensor.h"
 #include "hbridge.h"
 #include "i2c_app.h"
 #include "rs485.h"
+#include "safety.h"
 #include "sensor_report.h"
 #include "uart_app.h"
 /* USER CODE END Includes */
@@ -107,14 +110,22 @@ int main(void)
   /* USER CODE BEGIN 2 */
   uart_app_set_pc_uart(&huart3);
   i2c_app_init(&hi2c2);
+  hbridge_init(CFG_COIL_EN_PORT, CFG_COIL_EN_PIN, CFG_COIL_DIR_PORT, CFG_COIL_DIR_PIN);
+  buck_init(&huart5, CFG_BUCK_ADDRESS);
   current_sensor_init();
-  hbridge_init(GPIOA, GPIO_PIN_0, GPIOB, GPIO_PIN_0);
-  buck_init(&huart5, 1u);
+  coil_ctrl_init();
   rs485_init(&huart3);
   sensor_report_init();
 
+  if (safety_reset_was_iwdg())
+  {
+    pc_print("WARN: reinicio por watchdog IWDG (programa colgado)\r\n");
+  }
+
   pc_print("READY\r\n");
-  pc_print("Commands: HOLA I 1.50 | I -1.50 | ON | OFF | READ | HB | HELP (TTL auto-safe 5s)\r\n");
+  pc_print("Commands: I 1.50 | I -1.50 | ON | OFF | READ | STATUS | HB | HELP\r\n");
+
+  safety_iwdg_start();
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -124,9 +135,11 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+    safety_iwdg_kick();
     current_sensor_task();
-    sensor_report_task();
     buck_current_watchdog_task();
+    coil_ctrl_task();
+    sensor_report_task();
     rs485_poll();
   }
   /* USER CODE END 3 */
@@ -419,7 +432,9 @@ void MPU_Config(void)
 void Error_Handler(void)
 {
   /* USER CODE BEGIN Error_Handler_Debug */
-  /* User can add his own implementation to report the HAL error return state */
+  /* Dejar el puente H desactivado. Si el IWDG ya esta en marcha, reiniciara
+   * el MCU y el arranque seguro apagara tambien el buck. */
+  safety_force_coil_off();
   __disable_irq();
   while (1)
   {

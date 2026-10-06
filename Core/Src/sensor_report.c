@@ -1,10 +1,9 @@
 #include "sensor_report.h"
 
+#include "app_config.h"
+#include "coil_ctrl.h"
 #include "current_sensor.h"
-#include "rs485.h"
 #include "uart_app.h"
-
-#define REPORT_INTERVAL_MS  1000u
 
 static uint32_t g_last_report_ms = 0;
 
@@ -17,7 +16,7 @@ void sensor_report_task(void)
 {
   uint32_t now = HAL_GetTick();
 
-  if ((now - g_last_report_ms) < REPORT_INTERVAL_MS)
+  if ((now - g_last_report_ms) < CFG_REPORT_INTERVAL_MS)
   {
     return;
   }
@@ -30,7 +29,7 @@ void sensor_report_task(void)
   if (i_centi < 0) { i_sign = -1; i_centi = -i_centi; }
 
   /* Setpoint aplicado al buck (lo que se le pidio, despues de compensacion) */
-  float buck_mA = (float)(rs485_get_iapplied_abs() * 1000.0);
+  float buck_mA = (float)(coil_ctrl_get_applied_abs() * 1000.0);
   int   b_centi = (int)(buck_mA * 100.0f + 0.5f);
   int   b_sign  = 1;
   if (b_centi < 0) { b_sign = -1; b_centi = -b_centi; }
